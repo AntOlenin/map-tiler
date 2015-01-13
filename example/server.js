@@ -21,12 +21,12 @@ app.get('/map-tiler', function(req, res) {
         data: {
             lineString: lineString
         },
-        fat: 30,
+        fat: 2,
         split: true
     };
     var boxes = boxer.getBoxes(options);
     var tiles = tiler.getTiles(boxes);
-    return res.send(tiles);
+    return res.send({boxes: boxes, tiles: tiles});
 });
 
 var server = app.listen(3000, function() {

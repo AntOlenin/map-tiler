@@ -82,8 +82,9 @@ Map.prototype.buildBoxes = function() {
 };
 
 Map.prototype.drawBoxes = function(resp) {
-    var boundses = this.convertToGoogleBoundses(resp);
+    var boundses = this.convertToGoogleBoundses(resp.boxes);
     boundses.forEach($.proxy(this.drawOneBox, this));
+    console.log(resp.tiles);
 };
 
 Map.prototype.drawOneBox = function(bounds) {
