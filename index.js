@@ -1,4 +1,4 @@
-var lodash = require('lodash');
+var _ = require('underscore');
 
 
 /**
@@ -37,7 +37,7 @@ MapTiler.prototype.getPairDictByBoxList = function(boxes, maxZoom) {
 MapTiler.prototype.extendPairDictByOneBox = function(pairDict, box, maxZoom) {
     for (var zoom=0; zoom<=maxZoom; zoom++) {
         var oneZoomPairList = this.getOneZoomPairList(box, zoom);
-        pairDict[zoom] = lodash.union((pairDict[zoom] || []), oneZoomPairList);
+        pairDict[zoom] = _.union((pairDict[zoom] || []), oneZoomPairList);
     }
 };
 
@@ -70,8 +70,8 @@ MapTiler.prototype.latLon2TCoords = function(latLon, zoom) {
  * Отсчет тайлов идет от Северо-Западного угла.
  * */
 MapTiler.prototype.getFullPairList = function(tCoordsNw, tCoordsSe) {
-    var yRange = lodash.range(tCoordsNw[0], tCoordsSe[0]+1);
-    var xRange = lodash.range(tCoordsNw[1], tCoordsSe[1]+1);
+    var yRange = _.range(tCoordsNw[0], tCoordsSe[0]+1);
+    var xRange = _.range(tCoordsNw[1], tCoordsSe[1]+1);
 
     var pairList = [];
     for (var x=0; x<xRange.length; x++) {
