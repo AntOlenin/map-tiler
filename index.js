@@ -1,3 +1,6 @@
+var lodash = require('lodash');
+
+
 /**
  *
  * pair        1/1
@@ -16,8 +19,6 @@ function MapTiler() {
 
 }
 
-MapTiler.prototype.range = require('lodash').range;
-MapTiler.prototype.union = require('lodash').union;
 MapTiler.prototype.defaultMaxZoom = 14;
 
 MapTiler.prototype.getTiles = function(boxes, zoom) {
@@ -36,7 +37,7 @@ MapTiler.prototype.getPairDictByBoxList = function(boxes, maxZoom) {
 MapTiler.prototype.extendPairDictByOneBox = function(pairDict, box, maxZoom) {
     for (var zoom=0; zoom<=maxZoom; zoom++) {
         var oneZoomPairList = this.getOneZoomPairList(box, zoom);
-        pairDict[zoom] = this.union((pairDict[zoom] || []), oneZoomPairList);
+        pairDict[zoom] = lodash.union((pairDict[zoom] || []), oneZoomPairList);
     }
 };
 
@@ -69,8 +70,8 @@ MapTiler.prototype.latLon2TCoords = function(latLon, zoom) {
  * Отсчет тайлов идет от Северо-Западного угла.
  * */
 MapTiler.prototype.getFullPairList = function(tCoordsNw, tCoordsSe) {
-    var yRange = this.range(tCoordsNw[0], tCoordsSe[0]+1);
-    var xRange = this.range(tCoordsNw[1], tCoordsSe[1]+1);
+    var yRange = lodash.range(tCoordsNw[0], tCoordsSe[0]+1);
+    var xRange = lodash.range(tCoordsNw[1], tCoordsSe[1]+1);
 
     var pairList = [];
     for (var x=0; x<xRange.length; x++) {
