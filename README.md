@@ -44,6 +44,13 @@ Result
 }
 ```
 
+Advanced
+-------
+
+You can get boxes of path by npm [anyboxer](https://www.npmjs.com/package/anyboxer).
+
+Where path has [ [lat, lon], [lat, lon], [lat, lon] ] format.
+
 
 License
 -------
