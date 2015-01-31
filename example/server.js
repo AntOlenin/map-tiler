@@ -15,16 +15,58 @@ app.get('/', function (req, res) {
 });
 
 app.get('/map-tiler', function(req, res) {
-    var lineString = JSON.parse(req.query.path);
+    var path = JSON.parse(req.query.path);
 
-    var options = {
-        data: {
-            lineString: lineString
-        },
-        fat: 2,
-        split: true
+    var data = { "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": path
+                },
+                "properties": {
+                    "fat": 5
+                }
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "MultiLineString",
+                    "coordinates": [
+                        [ [0,0], [1,1] ],
+                        [ [0,0], [-1, -1] ]
+                    ]
+                },
+                "properties": {
+                    "fat": 5
+                }
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [5,5]
+                },
+                "properties": {
+                    "fat": 20
+                }
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "MultiPoint",
+                    "coordinates": [
+                        [10,10], [20, 20], [30, 30]
+                    ]
+                },
+                "properties": {
+                    "fat": 40
+                }
+            },
+        ]
     };
-    var boxes = boxer.getBoxes(options);
+    var boxes = boxer.getBoxes(data); // вторым параметром можно будет передать split(boolean)
     var tiles = tiler.getTiles(boxes);
     return res.send({boxes: boxes, tiles: tiles});
 });
