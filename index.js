@@ -1,4 +1,5 @@
-var _ = require('underscore');
+var _ = require('underscore'),
+    MAX_ZOOM_DEFAULT = 14;
 
 
 /**
@@ -15,65 +16,58 @@ var _ = require('underscore');
  *
  * */
 
-function MapTiler() {
-
+function mapTiler(boxes, zoom) {
+    var maxZoom = zoom || MAX_ZOOM_DEFAULT;
+    return getPairDictByBoxList(boxes, maxZoom);
 }
 
-MapTiler.prototype.defaultMaxZoom = 14;
-
-MapTiler.prototype.getTiles = function(boxes, zoom) {
-    var maxZoom = zoom || this.defaultMaxZoom;
-    return this.getPairDictByBoxList(boxes, maxZoom);
-};
-
-MapTiler.prototype.getPairDictByBoxList = function(boxes, maxZoom) {
+function getPairDictByBoxList(boxes, maxZoom) {
     var pairDict = {};
     boxes.forEach(function(box) {
-         MapTiler.prototype.extendPairDictByOneBox(pairDict, box, maxZoom)
+         extendPairDictByOneBox(pairDict, box, maxZoom)
     });
     return pairDict;
-};
+}
 
-MapTiler.prototype.extendPairDictByOneBox = function(pairDict, box, maxZoom) {
+function extendPairDictByOneBox(pairDict, box, maxZoom) {
     for (var zoom=0; zoom<=maxZoom; zoom++) {
-        var oneZoomPairList = this.getOneZoomPairList(box, zoom);
+        var oneZoomPairList = getOneZoomPairList(box, zoom);
         pairDict[zoom] = _.union((pairDict[zoom] || []), oneZoomPairList);
     }
-};
+}
 
 /**
  * Получаем список координат тайлов для одного значения zoom.
  * */
-MapTiler.prototype.getOneZoomPairList = function(box, zoom) {
-    var nw = [box[1][0], box[0][1]];
-    var se = [box[0][0], box[1][1]];
-    var tCoordsNw = this.latLon2TCoords(nw, zoom);
-    var tCoordsSe = this.latLon2TCoords(se, zoom);
-    return this.getFullPairList(tCoordsNw, tCoordsSe);
-};
+function getOneZoomPairList(box, zoom) {
+    var nw = [box[1][0], box[0][1]],
+        se = [box[0][0], box[1][1]],
+        tCoordsNw = latLon2TCoords(nw, zoom),
+        tCoordsSe = latLon2TCoords(se, zoom);
+    return getFullPairList(tCoordsNw, tCoordsSe);
+}
 
 /**
  * Конвертирует latLon координаты в координаты тайла tCoords.
  * Формулы: http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames.
  * */
-MapTiler.prototype.latLon2TCoords = function(latLon, zoom) {
-    var lat = latLon[0];
-    var lon = latLon[1];
-    var tLat = Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom));
-    var tLon = Math.floor((lon+180)/360*Math.pow(2,zoom));
+function latLon2TCoords(latLon, zoom) {
+    var lat = latLon[0], lon = latLon[1], tLat, tLon;
+    tLat = Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom));
+    tLon = Math.floor((lon+180)/360*Math.pow(2,zoom));
     return [tLat, tLon];
-};
+}
 
 /**
  * Зная координаты тайлов на Северо-Западном и Юго-Восточном углах
  * бокса, мы можем рассчитать координаты всех промежуточных тайлов.
  * Отсчет тайлов идет от Северо-Западного угла.
  * */
-MapTiler.prototype.getFullPairList = function(tCoordsNw, tCoordsSe) {
-    var yRange = _.range(tCoordsNw[0], tCoordsSe[0]+1);
-    var xRange = _.range(tCoordsNw[1], tCoordsSe[1]+1);
+function getFullPairList(tCoordsNw, tCoordsSe) {
+    var yRange = _.range(tCoordsNw[0], tCoordsSe[0]+1),
+        xRange = _.range(tCoordsNw[1], tCoordsSe[1]+1),
+        pairList = [];
 
-    var pairList = [];
     for (var x=0; x<xRange.length; x++) {
         for (var y=0; y<yRange.length; y++) {
             pairList.push(xRange[x] + '/' + yRange[y])
@@ -81,7 +75,7 @@ MapTiler.prototype.getFullPairList = function(tCoordsNw, tCoordsSe) {
     }
 
     return pairList;
-};
+}
 
 
-module.exports = MapTiler;
+module.exports = mapTiler;
