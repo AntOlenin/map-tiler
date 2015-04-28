@@ -1,5 +1,6 @@
 var _ = require('underscore'),
-    MAX_ZOOM_DEFAULT = 14;
+    MAX_ZOOM_DEFAULT = 14,
+    pairDict = {};
 
 
 /**
@@ -18,33 +19,36 @@ var _ = require('underscore'),
 
 function mapTiler(boxes, zoom) {
     var maxZoom = zoom || MAX_ZOOM_DEFAULT;
-    return getPairDictByBoxList(boxes, maxZoom);
-}
+    createPairDictByBoxList(boxes, maxZoom);
 
-function getPairDictByBoxList(boxes, maxZoom) {
-    var pairDict = {};
-    boxes.forEach(function(box) {
-         extendPairDictByOneBox(pairDict, box, maxZoom)
+    _.each(Object.keys(pairDict), function (key) {
+        pairDict[key] = _.uniq(pairDict[key])
     });
+
     return pairDict;
 }
 
-function extendPairDictByOneBox(pairDict, box, maxZoom) {
+function createPairDictByBoxList(boxes, maxZoom) {
+    boxes.forEach(function(box) {
+         extendPairDictByOneBox(box, maxZoom)
+    });
+}
+
+function extendPairDictByOneBox(box, maxZoom) {
     for (var zoom=0; zoom<=maxZoom; zoom++) {
-        var oneZoomPairList = getOneZoomPairList(box, zoom);
-        pairDict[zoom] = _.union((pairDict[zoom] || []), oneZoomPairList);
+        extendOneZoomPairList(box, zoom);
     }
 }
 
 /**
  * Получаем список координат тайлов для одного значения zoom.
  * */
-function getOneZoomPairList(box, zoom) {
+function extendOneZoomPairList(box, zoom) {
     var nw = [box[1][0], box[0][1]],
         se = [box[0][0], box[1][1]],
         tCoordsNw = latLon2TCoords(nw, zoom),
         tCoordsSe = latLon2TCoords(se, zoom);
-    return getFullPairList(tCoordsNw, tCoordsSe);
+        extendByFullPairList(tCoordsNw, tCoordsSe, zoom);
 }
 
 /**
@@ -63,18 +67,18 @@ function latLon2TCoords(latLon, zoom) {
  * бокса, мы можем рассчитать координаты всех промежуточных тайлов.
  * Отсчет тайлов идет от Северо-Западного угла.
  * */
-function getFullPairList(tCoordsNw, tCoordsSe) {
+function extendByFullPairList(tCoordsNw, tCoordsSe, zoom) {
     var yRange = _.range(tCoordsNw[0], tCoordsSe[0]+1),
-        xRange = _.range(tCoordsNw[1], tCoordsSe[1]+1),
-        pairList = [];
+        xRange = _.range(tCoordsNw[1], tCoordsSe[1]+1);
 
     for (var x=0; x<xRange.length; x++) {
         for (var y=0; y<yRange.length; y++) {
-            pairList.push(xRange[x] + '/' + yRange[y])
+            var pair = xRange[x] + '/' + yRange[y];
+
+            if (!pairDict[zoom]) pairDict[zoom] = [];
+            pairDict[zoom].push(pair)
         }
     }
-
-    return pairList;
 }
 
 
