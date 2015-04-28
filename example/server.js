@@ -35,13 +35,12 @@ app.get('/map-tiler', function(req, res) {
     };
 
     anyBoxer(data, options, function(err, boxes) {
-        var tiles = mapTiler(boxes, 18);
+        var tiles = mapTiler(boxes, 19);
         res.send({boxes: boxes, tiles: tiles});
     });
 
 });
 
 var server = app.listen(3000, function() {
-    var address = server.address();
-    console.log('Example app listening at http://%s:%s', address.address, address.port)
+    console.log('Example app listening at http://localhost:3000')
 });
