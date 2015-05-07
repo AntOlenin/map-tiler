@@ -1,5 +1,7 @@
 var express = require('express');
 var app = express();
+var vorob = require('./test_data/vorobiovy_gory.json');
+var bibirevo = require('./test_data/bibirevo.json');
 
 app.use("/js", express.static(__dirname + '/client'));
 app.set('views', __dirname + '/views');
@@ -29,6 +31,8 @@ app.get('/map-tiler', function(req, res) {
         ]
     };
 
+    data = bibirevo;
+
     var options = {
         split: false,
         reverse: true
@@ -41,6 +45,6 @@ app.get('/map-tiler', function(req, res) {
 
 });
 
-var server = app.listen(3000, function() {
-    console.log('Example app listening at http://localhost:3000')
+var server = app.listen(3001, function() {
+    console.log('Example app listening at http://localhost:3001')
 });
