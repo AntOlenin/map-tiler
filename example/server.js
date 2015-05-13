@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var vorob = require('./test_data/vorobiovy_gory.json');
 var bibirevo = require('./test_data/bibirevo.json');
+var california = require('./test_data/california.json');
 
 app.use("/js", express.static(__dirname + '/client'));
 app.set('views', __dirname + '/views');
@@ -31,7 +32,7 @@ app.get('/map-tiler', function(req, res) {
         ]
     };
 
-    data = bibirevo;
+    data = california;
 
     var options = {
         split: false,
@@ -39,7 +40,7 @@ app.get('/map-tiler', function(req, res) {
     };
 
     anyBoxer(data, options, function(err, boxes) {
-        var tiles = mapTiler(boxes, 19);
+        var tiles = mapTiler(boxes, 16);
         res.send({boxes: boxes, tiles: tiles});
     });
 
