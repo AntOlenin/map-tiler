@@ -18,6 +18,7 @@ var _ = require('underscore'),
  * */
 
 function mapTiler(boxes, zoom) {
+    pairDict = {};
     var maxZoom = zoom || MAX_ZOOM_DEFAULT;
     createPairDictByBoxList(boxes, maxZoom);
 
