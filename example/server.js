@@ -45,12 +45,12 @@ app.get('/map-tiler', function(req, res) {
 
     anyBoxer(data, options, function(err, boxes) {
 
-        //var tiles = mapTiler.sync(boxes, 18);
-        //res.send({tiles: tiles});
-        //
-        mapTiler.async(boxes, 18, function (err, tiles) {
-            res.send({tiles: tiles});
-        });
+        var tiles = mapTiler.sync(boxes, 18);
+        res.send({tiles: tiles});
+
+        //mapTiler.async(boxes, 18, function (err, tiles) {
+        //    res.send({tiles: tiles});
+        //});
     });
 
 });
