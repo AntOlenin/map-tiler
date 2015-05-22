@@ -24,7 +24,8 @@ function mapTiler(boxes, zoom) {
     createPairDictByBoxList(boxes, maxZoom);
 
     _.each(Object.keys(pairDict), function (key) {
-        pairDict[key] = _.uniq(pairDict[key]);
+        pairDict[key].sort();
+        pairDict[key] = _.uniq(pairDict[key], true);
     });
 
     return pairDict;
