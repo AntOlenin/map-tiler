@@ -14,6 +14,10 @@ app.get('/', function (req, res) {
     res.render('index.jade', {name: 'mi'});
 });
 
+app.get('/check', function (req, res) {
+    res.send('Операция обработана...');
+});
+
 app.get('/map-tiler', function(req, res) {
     var path = JSON.parse(req.query.path);
 
@@ -32,7 +36,7 @@ app.get('/map-tiler', function(req, res) {
         ]
     };
 
-    data = california;
+    //data = california;
 
     var options = {
         split: false,
@@ -40,8 +44,13 @@ app.get('/map-tiler', function(req, res) {
     };
 
     anyBoxer(data, options, function(err, boxes) {
-        var tiles = mapTiler(boxes, 16);
-        res.send({boxes: boxes, tiles: tiles});
+
+        //var tiles = mapTiler.sync(boxes, 18);
+        //res.send({tiles: tiles});
+        //
+        mapTiler.async(boxes, 18, function (err, tiles) {
+            res.send({tiles: tiles});
+        });
     });
 
 });

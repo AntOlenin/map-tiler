@@ -11,6 +11,7 @@
         $newBtn = $('#new'),
         $helpBar = $('#helpbar'),
         $calcBtn = $('#calculate'),
+        $checAsyncBtn = $('#check-async'),
 
         mapOptions = {
             center: new gMaps.LatLng(55.74, 37.61),
@@ -66,6 +67,8 @@
             polyline.setPath(polylineOptions.path);
             $calcBtn.show();
             $calcBtn.on('click', buildBoxes);
+            $checAsyncBtn.show();
+            $checAsyncBtn.on('click', checkAsync);
         }
     }
 
@@ -84,6 +87,12 @@
             newPath.push(one);
         });
         return newPath;
+    }
+
+    function checkAsync() {
+        $.get('/check').done(function (resp) {
+            console.log(resp);
+        });
     }
 
 }());

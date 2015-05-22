@@ -1,4 +1,5 @@
 var _ = require('underscore'),
+    async = require('async'),
     MAX_ZOOM_DEFAULT = 14,
     pairDict = {};
 
@@ -23,10 +24,20 @@ function mapTiler(boxes, zoom) {
     createPairDictByBoxList(boxes, maxZoom);
 
     _.each(Object.keys(pairDict), function (key) {
-        pairDict[key] = _.uniq(pairDict[key])
+        pairDict[key] = _.uniq(pairDict[key]);
     });
 
     return pairDict;
+}
+
+function mapTilerAsync(boxes, zoom, callback) {
+    pairDict = {};
+    var maxZoom = zoom || MAX_ZOOM_DEFAULT;
+    createPairDictByBoxList(boxes, maxZoom);
+
+    asyncUniqDict(pairDict, function (err, result) {
+        callback(null, result);
+    });
 }
 
 function createPairDictByBoxList(boxes, maxZoom) {
@@ -83,4 +94,52 @@ function extendByFullPairList(tCoordsNw, tCoordsSe, zoom) {
 }
 
 
-module.exports = mapTiler;
+function asyncUniqDict(dict, callback) {
+    var newDict = {},
+        keys = Object.keys(pairDict);
+
+    async.eachSeries(keys,
+
+        function (key, callback) {
+            setTimeout(function() {
+                asyncUniq(dict[key], function (err, result) {
+                    newDict[key] = result;
+                    callback();
+                });
+            }, 1);
+        },
+
+        function (err) {
+            if (err) throw err;
+            callback(null, newDict);
+        }
+
+    )
+}
+
+function asyncUniq(array, callback) {
+    var result = [];
+
+    async.eachSeries(array,
+
+        function (item, callback) {
+            setTimeout(function() {
+                if (!_.contains(result, item)) {
+                    result.push(item);
+                }
+                callback();
+            }, 1);
+        },
+
+        function (err) {
+            if (err) throw err;
+            callback(null, result);
+        }
+    );
+}
+
+
+module.exports = {
+    sync: mapTiler,
+    async: mapTilerAsync
+};
