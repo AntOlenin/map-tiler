@@ -4,7 +4,9 @@
   "description": "for map cache",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/index.js",
+    "build": "babel index.es6.js > index.js",
+    "watch": "babel -w index.es6.js --out-file index.js"
   },
   "repository": {
     "type": "git",
