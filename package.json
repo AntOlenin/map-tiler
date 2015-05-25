@@ -21,5 +21,8 @@
   "dependencies": {
     "async": "^1.0.0",
     "underscore": "^1.7.0"
+  },
+  "devDependencies": {
+    "babel": "^5.4.7"
   }
 }
